@@ -1,7 +1,5 @@
 # Face Detection and Recegonitions Project - Thomas More AI-Frameworks
 
-## Matthias Hefel
-
 ## Features
 
 ## File Structure

@@ -2,3 +2,4 @@
 data/*
 *.keras
 *.h5
+src_test

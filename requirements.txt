@@ -1,1 +1,16 @@
-tensorflow
+deepface==0.0.93
+Flask==3.1.0
+Flask-Cors==5.0.0
+keras==3.7.0
+keras-facenet==0.3.2
+keras-vggface==0.6
+mtcnn==1.0.0
+numpy==2.0.2
+opencv-python==4.10.0.84
+pandas==2.2.3
+pillow==11.1.0
+retina-face==0.0.17
+scikit-learn==1.6.1
+scipy==1.15.1
+split-folders==0.5.1
+tensorflow==2.18.0

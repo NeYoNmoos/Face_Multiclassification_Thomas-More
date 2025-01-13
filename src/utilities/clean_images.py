@@ -1,8 +1,6 @@
 from PIL import Image
 from pillow_heif import register_heif_opener
 
-register_heif_opener()
-
 def convert_heic_to_jpg(heic_path, output_path):
     img = Image.open(heic_path)
     img = img.convert("RGB")  
@@ -31,9 +29,24 @@ def extract_frames(video_path, output_dir, frame_rate=1):
 from PIL import Image
 from pillow_heif import register_heif_opener
 
-register_heif_opener()
 
-def process_files_in_folder(input_folder, output_folder, size=(224, 224)):
+def extract_first_frame_from_video(video_path, output_path, size=(224, 224)):
+    cap = cv2.VideoCapture(video_path)
+    if not cap.isOpened():
+        print(f"Error opening video file: {video_path}")
+        return
+
+    success, frame = cap.read()
+    if success:
+        resized_frame = cv2.resize(frame, size)  
+        cv2.imwrite(output_path, resized_frame) 
+    else:
+        print(f"Failed to read the first frame of video: {video_path}")
+
+    cap.release()
+
+def process_files_in_folder(input_folder, output_folder, size=(640, 480)):
+    register_heif_opener()
     os.makedirs(output_folder, exist_ok=True)
 
     for filename in os.listdir(input_folder):
@@ -59,18 +72,3 @@ def process_files_in_folder(input_folder, output_folder, size=(224, 224)):
                 print(f"Skipping unsupported file format: {filename}")
         except Exception as e:
             print(f"Error processing {filename}: {e}")
-
-def extract_first_frame_from_video(video_path, output_path, size=(224, 224)):
-    cap = cv2.VideoCapture(video_path)
-    if not cap.isOpened():
-        print(f"Error opening video file: {video_path}")
-        return
-
-    success, frame = cap.read()
-    if success:
-        resized_frame = cv2.resize(frame, size)  
-        cv2.imwrite(output_path, resized_frame) 
-    else:
-        print(f"Failed to read the first frame of video: {video_path}")
-
-    cap.release()

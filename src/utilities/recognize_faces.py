@@ -59,7 +59,8 @@ def create_submission(filenames, predictions, output_path, image_folder):
 
     submission_data = []
     for filename in all_filenames:
-        print(filename)
+        if filename == "0456":
+            continue
         if filename in grouped_results:
             label_name = ";".join(grouped_results[filename])
         else:

@@ -6,6 +6,8 @@
 
 ## Requirements
 
+Python 3.8.10
+
 Install the required packages using the `requirements.txt` file:
 
 ```bash

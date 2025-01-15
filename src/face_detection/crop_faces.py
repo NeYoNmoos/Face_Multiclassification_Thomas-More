@@ -3,7 +3,6 @@ import cv2
 import numpy as np
 from retinaface import RetinaFace
 import gc
-import pandas as pd
 
 def preprocess_face(face_img, target_size=(224, 224)):
     try:
@@ -43,67 +42,16 @@ def preprocess_face(face_img, target_size=(224, 224)):
         print(f"Error preprocessing face: {str(e)}")
         return None
 
-# def detect_faces(image):
-#     # from retinaface import RetinaFace
-#     detections = RetinaFace.detect_faces(image)
-#     face_boxes = []
-#     if isinstance(detections, dict):
-#         for _, face_data in detections.items():
-#             x1, y1, x2, y2 = face_data['facial_area']
-#             face_boxes.append([x1, y1, x2 - x1, y2 - y1])
+def detect_faces(image):
+    detections = RetinaFace.detect_faces(image)
+    face_boxes = []
+    if isinstance(detections, dict):
+        for _, face_data in detections.items():
+            x1, y1, x2, y2 = face_data['facial_area']
+            face_boxes.append([x1, y1, x2 - x1, y2 - y1])
 
-#     return sorted(face_boxes, key=lambda x: x[0])  
+    return sorted(face_boxes, key=lambda x: x[0])  
 
-
-# def extract_and_save_faces(images, labels, output_folder, batch_size=50, target_size=(224, 224)):
-#     os.makedirs(output_folder, exist_ok=True)
-
-#     for batch_start in range(0, len(images), batch_size):
-#         batch_images = images[batch_start:batch_start + batch_size]
-#         batch_labels = labels[batch_start:batch_start + batch_size]
-
-#         for (filename, image), image_labels in zip(batch_images, batch_labels):
-#             print(f"Processing {filename}...")
-
-#             if image_labels == ["nothing"]:
-#                 continue
-
-#             # Convert to RGB for detection
-#             rgb_image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-#             face_boxes = detect_faces(rgb_image)
-
-#             # Skip if face count does not match label count
-#             # if len(face_boxes) != len(image_labels):
-#             #     print(f"Skipping {filename} - Face count mismatch")
-#             #     continue
-
-#             # Process and save each face
-#             for i, (box, label) in enumerate(zip(face_boxes, image_labels)):
-#                 x, y, w, h = box
-
-#                 # Add margin to bounding box
-#                 margin = int(max(w, h) * 0.2)
-#                 x = max(0, x - margin)
-#                 y = max(0, y - margin)
-#                 w = min(w + 2 * margin, image.shape[1] - x)
-#                 h = min(h + 2 * margin, image.shape[0] - y)
-
-#                 # Extract face region
-#                 face = image[y:y+h, x:x+w]
-
-#                 # Preprocess face
-#                 processed_face = preprocess_face(face, target_size)
-#                 if processed_face is None:
-#                     print(f"Warning: Could not process face in {filename}")
-#                     continue
-
-#                 # Save face image in label folder
-#                 label_folder = os.path.join(output_folder, label.lower())
-#                 os.makedirs(label_folder, exist_ok=True)
-
-#                 face_filename = f"{os.path.splitext(filename)[0]}_face_{i}.jpg"
-#                 face_path = os.path.join(label_folder, face_filename)
-#                 cv2.imwrite(face_path, cv2.cvtColor(processed_face, cv2.COLOR_RGB2BGR))
 
 def load_images(image_folder, label_map=None):
     images = []
@@ -120,18 +68,58 @@ def load_images(image_folder, label_map=None):
 
     return images, image_labels if label_map else None
 
+def extract_and_save_faces(images, labels, output_folder, batch_size=50, target_size=(224, 224)):
+    os.makedirs(output_folder, exist_ok=True)
 
-# def create_extractions(train_image_folder, label_csv_path, output_folder):
-#     label_data = pd.read_csv(label_csv_path)
-#     label_data['label_name'] = label_data['label_name'].apply(eval) 
-#     label_map = dict(zip(label_data['image'].astype(str).str.zfill(4) + ".jpg", label_data['label_name']))
+    for batch_start in range(0, len(images), batch_size):
+        batch_images = images[batch_start:batch_start + batch_size]
+        batch_labels = labels[batch_start:batch_start + batch_size]
 
-#     train_images, train_labels = load_images(train_image_folder, label_map=label_map)
+        for (filename, image), image_labels in zip(batch_images, batch_labels):
+            print(f"Processing {filename}...")
 
-#     extract_and_save_faces(train_images, labels=train_labels, output_folder=output_folder, batch_size=50)
+            if image_labels == ["nothing"]:
+                continue
+
+            # Convert to RGB for detection
+            rgb_image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+            face_boxes = detect_faces(rgb_image)
+
+            # Skip if face count does not match label count
+            # if len(face_boxes) != len(image_labels):
+            #     print(f"Skipping {filename} - Face count mismatch")
+            #     continue
+
+            # Process and save each face
+            for i, (box, label) in enumerate(zip(face_boxes, image_labels)):
+                x, y, w, h = box
+
+                # Add margin to bounding box
+                margin = int(max(w, h) * 0.2)
+                x = max(0, x - margin)
+                y = max(0, y - margin)
+                w = min(w + 2 * margin, image.shape[1] - x)
+                h = min(h + 2 * margin, image.shape[0] - y)
+
+                # Extract face region
+                face = image[y:y+h, x:x+w]
+
+                # Preprocess face
+                processed_face = preprocess_face(face, target_size)
+                if processed_face is None:
+                    print(f"Warning: Could not process face in {filename}")
+                    continue
+
+                # Save face image in label folder
+                label_folder = os.path.join(output_folder, label.lower())
+                os.makedirs(label_folder, exist_ok=True)
+
+                face_filename = f"{os.path.splitext(filename)[0]}_face_{i}.jpg"
+                face_path = os.path.join(label_folder, face_filename)
+                cv2.imwrite(face_path, cv2.cvtColor(processed_face, cv2.COLOR_RGB2BGR))
+
 
 def detect_faces_test(image):
-    # from retinaface import RetinaFace
     detections = RetinaFace.detect_faces(image, threshold=0.5)
     face_boxes = []
     if isinstance(detections, dict):
@@ -226,8 +214,12 @@ def extract_and_save_test_faces(images, output_folder, batch_size=50, target_siz
     print(f"Fallback crops created: {stats['fallback_crops']}")
     print(f"Average faces per image with detections: {stats['faces_detected']/(stats['total_images']-stats['fallback_crops']):.2f}")
     
-def process_and_crop_faces(test_image_folder, test_output_folder):
+def process_and_crop_faces():
+    test_image_folder = "../data_test/test_images/cleaned_images"
+    test_output_folder = "../data_test/faces/test_faces"
+
     test_images, _ = load_images(test_image_folder)
+
     extract_and_save_test_faces(test_images, output_folder=test_output_folder, batch_size=50)
     
     

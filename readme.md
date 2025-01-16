@@ -16,20 +16,20 @@ The project was part of the AI-Frameworks course at Thomas More University of Ap
 
 ```
 ├── data_test/
-│ ├── faces/                         # Cropped Faces
+│ ├── faces/                    # Cropped Faces
 │ ├── test_images/              # Original and cleaned images
-│ └── labels/                       # Label CSV files
-├── models/                         # Saved models (.json and .h5)
-├── report/                           # Comprehensive project report
-├── src/                                # Source code for the project
-│ ├── utilities/                     # Helper functions for preprocessing, detection, etc.
+│ └── labels/                   # Label CSV files
+├── models/                     # Saved models (.json and .h5)
+├── report/                     # Comprehensive project report
+├── src/                        # Source code for the project
+│ ├── utilities/                # Helper functions for preprocessing, detection, etc.
 │ ├── 01_clean_label_data.ipynb
 │ ├── 02_clean_image_data.ipynb
 │ ├── 03_crop_faces_retinaface.ipynb
 │ ├── 04_train_model_facenet_finetuning.ipynb
-│ └── main.ipynb               # Test pipeline to preproocess, crop faces, load model and create predictions
-├── requirements.txt           # Python dependencies
-└── README.md              # Project documentation
+│ └── main.ipynb                # Test pipeline to preproocess, crop faces, load model and create predictions
+├── requirements.txt            # Python dependencies
+└── README.md                   # Project documentation
 ```
 
 ## Requirements

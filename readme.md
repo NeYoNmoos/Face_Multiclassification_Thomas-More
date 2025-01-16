@@ -1,4 +1,4 @@
-# Face Detection and Recegonition Project - Thomas More AI-Frameworks
+# Face Detection and Recognition Project - Thomas More AI-Frameworks
 
 This project focuses on detecting and recognizing faces in images, specifically identifying classmates from a provided dataset. The pipeline involves data cleaning, preprocessing, face detection, and training a face recognition model to classify faces into one of 14 classes.
 

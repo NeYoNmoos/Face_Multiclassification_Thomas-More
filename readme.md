@@ -51,7 +51,7 @@ Execute cells in main.ipynb file.
 
 ## Documenation
 
-A comprehensive report aboat all approaches used, aswell as evaluation and personal experiences can be found in report/ folder.
+A comprehensive report about all approaches used, aswell as evaluation and personal experiences can be found in report/ folder.
 
 ## Dependencies
 
